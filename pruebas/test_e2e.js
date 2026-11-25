@@ -215,7 +215,7 @@ const scriptsToLoad = [
 ];
 
 for (const s of scriptsToLoad) {
-  const code = fs.readFileSync(path.join('d:/anp/Aprendizaje-no-Supervisado', s), 'utf8');
+  const code = fs.readFileSync(path.join(__dirname, '..', s), 'utf8');
   vm.runInContext(code, sandbox);
 }
 console.log('✓ Todos los 17 scripts cargados sin errores de sintaxis');
