@@ -1024,3 +1024,97 @@ body.dashboard-modo {
   padding: 16px 20px;
 }
 
+/* ==========================================================================
+   Extensiones del Dashboard: Parámetros Dinámicos, Tipos y Requisitos
+   ========================================================================== */
+
+/* Bloques de parámetros dinámicos */
+.dash-param-bloque {
+  border: 1px solid var(--color-borde, #cfe6e2);
+  border-radius: 6px;
+  padding: 10px;
+  background: #f9fdfc;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.dash-param-bloque-titulo {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #005953;
+  background: #e6f7f5;
+  padding: 3px 8px;
+  border-radius: 4px;
+  margin: -2px -2px 4px -2px;
+}
+
+.dash-params-vacio {
+  padding: 24px 12px;
+  text-align: center;
+  background: #fbfdfc;
+  border: 1px dashed #cfe6e2;
+  border-radius: 6px;
+}
+
+/* Badge de tipo de variable en encabezado de columna */
+.dash-col-tipo-badge {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ccfbf1;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 3px;
+  font-size: 9.5px;
+  font-weight: 600;
+  padding: 1px 5px;
+  cursor: pointer;
+  transition: all 150ms ease;
+  line-height: 1.2;
+}
+
+.dash-col-tipo-badge:hover {
+  background: #ffffff;
+  color: #005953;
+}
+
+/* Tarjetas de fórmulas y requisitos */
+.dash-paso-desc-sub {
+  font-size: 10.5px;
+  color: #4a6b66;
+  margin-top: 1px;
+}
+
+.dash-paso-check-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: #005953;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  background: #e6f7f5;
+  padding: 3px 7px;
+  border-radius: 4px;
+  border: 1px solid #b2dfdb;
+  transition: background 150ms ease;
+}
+
+.dash-paso-check-box:hover {
+  background: #b2dfdb;
+}
+
+.dash-paso-justificacion {
+  font-size: 11px;
+  color: #047857;
+  background: #f0fdf4;
+  border-left: 3px solid #10b981;
+  padding: 4px 8px;
+  margin: 4px 0 8px;
+  border-radius: 0 4px 4px 0;
+  line-height: 1.35;
+}
+
+
