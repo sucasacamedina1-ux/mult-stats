@@ -17,20 +17,33 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  document.getElementById("btn-agregar-fila").addEventListener("click", agregarFila);
-  document.getElementById("btn-agregar-columna").addEventListener("click", agregarColumna);
-  document.getElementById("btn-exportar").addEventListener("click", exportarCSV);
+  var btnAddFila = document.getElementById("btn-agregar-fila");
+  if (btnAddFila) btnAddFila.addEventListener("click", agregarFila);
+  var btnAddCol = document.getElementById("btn-agregar-columna");
+  if (btnAddCol) btnAddCol.addEventListener("click", agregarColumna);
+  var btnAddVarios = document.getElementById("btn-agregar-varios");
+  if (btnAddVarios) btnAddVarios.addEventListener("click", function() {
+    if (typeof abrirModalAgregarDimensiones === "function") abrirModalAgregarDimensiones();
+  });
+  var btnExp = document.getElementById("btn-exportar");
+  if (btnExp) btnExp.addEventListener("click", exportarCSV);
 
   var btnImportar = document.getElementById("btn-importar");
   var inputArchivo = document.getElementById("input-archivo");
-  btnImportar.addEventListener("click", function () { inputArchivo.click(); });
-  inputArchivo.addEventListener("change", function () {
-    if (this.files && this.files.length > 0) {
-      importarCSV(this.files[0]);
-      this.value = "";
-      actualizarSelectoresVariables();
-    }
-  });
+  if (btnImportar && inputArchivo) {
+    btnImportar.addEventListener("click", function () { inputArchivo.click(); });
+    inputArchivo.addEventListener("change", function () {
+      if (this.files && this.files.length > 0) {
+        if (typeof importarArchivo === "function") {
+          importarArchivo(this.files[0]);
+        } else {
+          importarCSV(this.files[0]);
+        }
+        this.value = "";
+        actualizarSelectoresVariables();
+      }
+    });
+  }
 
   var contenedor = document.getElementById("contenedor-tabla");
   contenedor.addEventListener("paste", function (evento) {
