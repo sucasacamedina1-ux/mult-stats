@@ -47,7 +47,10 @@
         <button type="button" class="dash-menu-link" onclick="toggleDropdownMenu('menu-archivo', event)">Archivo ▾</button>
         <div id="menu-archivo" class="dash-dropdown">
           <button type="button" class="dash-dropdown-link" onclick="ejecutarAccionMenu('importar-csv')">
-            <span>📥 Importar archivo CSV...</span>
+            <span>📥 Importar archivo (CSV, Excel)...</span>
+          </button>
+          <button type="button" class="dash-dropdown-link" onclick="ejecutarAccionMenu('exportar-excel')">
+            <span>📊 Exportar libro a Excel (.xls)</span>
           </button>
           <button type="button" class="dash-dropdown-link" onclick="ejecutarAccionMenu('exportar-csv')">
             <span>📤 Exportar hoja a CSV</span>
@@ -70,10 +73,13 @@
         <button type="button" class="dash-menu-link" onclick="toggleDropdownMenu('menu-editar', event)">Editar ▾</button>
         <div id="menu-editar" class="dash-dropdown">
           <button type="button" class="dash-dropdown-link" onclick="ejecutarAccionMenu('agregar-fila')">
-            <span>➕ Agregar fila</span>
+            <span>➕ Agregar fila (1)</span>
           </button>
           <button type="button" class="dash-dropdown-link" onclick="ejecutarAccionMenu('agregar-columna')">
-            <span>➕ Agregar columna</span>
+            <span>➕ Agregar columna (1)</span>
+          </button>
+          <button type="button" class="dash-dropdown-link" onclick="ejecutarAccionMenu('agregar-dimensiones')">
+            <span>📐 Agregar múltiples filas y columnas...</span>
           </button>
           <div class="dash-dropdown-separador"></div>
           <button type="button" class="dash-dropdown-link" onclick="ejecutarAccionMenu('filtrar-datos')">
@@ -338,13 +344,15 @@
         <div class="dash-card-header">
           <h2 class="dash-card-titulo" id="dash-titulo-tabla">Tabla de datos</h2>
           <div class="dash-card-botones">
-            <button type="button" id="btn-importar" class="dash-btn-outline" aria-label="Importar archivo CSV">Importar CSV</button>
+            <button type="button" id="btn-importar" class="dash-btn-outline" aria-label="Importar archivo">📥 Importar</button>
             <button type="button" id="dash-btn-limpiar" class="dash-btn-outline" onclick="limpiarTablaDatos()">Limpiar</button>
             <button type="button" id="dash-btn-filtrar" class="dash-btn-outline" onclick="filtrarDatosValidos()">Filtrar</button>
-            <button type="button" id="btn-agregar-fila" class="dash-btn-outline" title="Agregar una fila">+</button>
+            <button type="button" id="btn-agregar-fila" class="dash-btn-outline" title="Agregar una fila">+ Fila</button>
             <button type="button" id="btn-agregar-columna" class="dash-btn-outline" title="Agregar una columna">+ Col</button>
+            <button type="button" id="btn-agregar-varios" class="dash-btn-outline" title="Determinar cuántas filas y columnas deseas agregar">+ Varias...</button>
+            <button type="button" id="dash-export-excel-top" class="dash-btn-outline" onclick="if(typeof exportarExcel==='function') exportarExcel();" title="Exportar a Excel (.xls)">📊 Excel</button>
             <button type="button" id="btn-exportar" class="dash-btn-outline" title="Exportar como CSV">CSV</button>
-            <input type="file" id="input-archivo" accept=".csv" hidden>
+            <input type="file" id="input-archivo" accept=".csv, .xlsx, .xls, .xml, .txt" hidden>
           </div>
         </div>
 
@@ -372,8 +380,10 @@
             <button type="button" class="dash-pill" data-filtro="covarianza" onclick="filtrarPasoAPaso('covarianza', this)">Covarianza</button>
             <button type="button" class="dash-pill" data-filtro="correlacion" onclick="filtrarPasoAPaso('correlacion', this)">Correlación</button>
             <button type="button" class="dash-pill" data-filtro="cluster" onclick="filtrarPasoAPaso('cluster', this)">Clúster</button>
+            <button type="button" class="dash-pill" id="dash-btn-mas-formulas" style="background:#ccfbf1; font-weight:700;" title="Agregar más fórmulas personalizadas">+ Fórmula</button>
           </div>
           <div class="dash-export-btns">
+            <button type="button" class="dash-btn-outline" id="dash-export-excel">Exportar Excel</button>
             <button type="button" class="dash-btn-outline" id="dash-export-word">Exportar Word</button>
             <button type="button" class="dash-btn-export-pdf" id="dash-export-pdf">Exportar PDF</button>
           </div>
@@ -390,6 +400,8 @@
           <div class="res-encabezado-seccion" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid #cfe6e2; padding-bottom:8px;">
             <h3 style="margin:0; font-size:14px; font-weight:700; color:#005953;">Reporte de Resultados Analíticos</h3>
             <div class="res-acciones" id="res-acciones" style="display:flex; gap:8px;">
+              <button type="button" class="dash-btn-outline" onclick="if(typeof exportarExcel==='function') exportarExcel();" title="Exportar reporte a Excel (.xls)">📊 Excel</button>
+              <button type="button" class="dash-btn-outline" onclick="if(typeof exportarResolucionWord==='function') exportarResolucionWord();" title="Exportar reporte a Word (.doc)">📄 Word</button>
               <button type="button" id="btn-limpiar-resultados" class="dash-btn-outline" title="Limpiar reporte">Limpiar reporte</button>
               <button type="button" id="btn-imprimir-resultados" class="dash-btn-outline" title="Imprimir reporte">Imprimir reporte</button>
             </div>
@@ -405,45 +417,15 @@
     <!-- COLUMNA 3: SIDEBAR DERECHO DE PARÁMETROS E INTERPRETACIÓN -->
     <aside class="dash-sidebar-der" aria-label="Parámetros e interpretación">
 
-      <!-- TARJETA 1: PANEL DE PARÁMETROS -->
+      <!-- TARJETA 1: PANEL DE PARÁMETROS DINÁMICO -->
       <section class="dash-card-params" aria-labelledby="dash-titulo-params">
-        <h3 class="dash-card-titulo" id="dash-titulo-params">Panel de parámetros</h3>
-
-        <div class="dash-campo">
-          <label class="dash-campo-label" for="dash-select-algoritmo">Algoritmo</label>
-          <select id="dash-select-algoritmo" class="dash-select">
-            <option value="kmeans" selected>K-Means</option>
-            <option value="kmedoids">K-Medoids (PAM)</option>
-          </select>
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+          <h3 class="dash-card-titulo" id="dash-titulo-params">Panel de parámetros</h3>
+          <span style="font-size:10px; color:#6f928d; background:#e6f7f5; padding:2px 6px; border-radius:4px; font-weight:600;">Dinámico</span>
         </div>
 
-        <div class="dash-campo">
-          <label class="dash-campo-label" for="dash-input-k">Valor de K</label>
-          <div class="dash-input-k-wrapper">
-            <input type="number" id="dash-input-k" class="dash-input-num" value="2" min="1" max="10">
-            <div class="dash-btn-stepper">
-              <button type="button" id="dash-k-up" class="dash-step-btn" title="Aumentar K">▲</button>
-              <button type="button" id="dash-k-down" class="dash-step-btn" title="Disminuir K">▼</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="dash-campo">
-          <label class="dash-campo-label" for="dash-select-distancia">Distancia</label>
-          <select id="dash-select-distancia" class="dash-select">
-            <option value="euclidiana" selected>Euclidiana</option>
-            <option value="manhattan">Manhattan</option>
-            <option value="minkowski">Minkowski</option>
-          </select>
-        </div>
-
-        <div class="dash-campo">
-          <span class="dash-campo-label">Centroides iniciales</span>
-          <div class="dash-toggle-seg">
-            <button type="button" id="dash-centroides-aleatorio" class="dash-toggle-btn dash-toggle-btn--activo">Aleatorio</button>
-            <button type="button" id="dash-centroides-manual" class="dash-toggle-btn">Manual</button>
-          </div>
-        </div>
+        <!-- Contenedor dinámico generado según las opciones elegidas a la izquierda -->
+        <div id="dash-params-dinamicos"></div>
 
         <button type="button" id="dash-btn-ejecutar" class="dash-btn-ejecutar">EJECUTAR</button>
         <button type="button" id="dash-btn-reiniciar" class="dash-btn-reiniciar">REINICIAR</button>
@@ -453,13 +435,14 @@
       <section class="dash-card-interp" aria-labelledby="dash-titulo-interp">
         <h3 class="dash-card-titulo" id="dash-titulo-interp">Interpretación automática</h3>
         <p class="dash-interp-texto" id="dash-interp-cuerpo">
-          Se identificaron 2 clústeres. El Clúster 1 (A, B, C) agrupa estudiantes con menor número de horas de estudio y notas relativamente menores. El Clúster 2 (D, E, F) agrupa estudiantes con mayor número de horas y notas mayores. Correlación positiva muy fuerte (r=0.998).
+          Se identificaron 2 clústeres. El Clúster 1 agrupa estudiantes con menor número de horas de estudio y notas menores. El Clúster 2 agrupa estudiantes con mayor dedicación. Correlación positiva fuerte.
         </p>
       </section>
 
       <!-- TARJETA 3: ACCIONES RÁPIDAS -->
       <section class="dash-card-acciones" aria-labelledby="dash-titulo-acciones">
         <h3 class="dash-card-titulo" id="dash-titulo-acciones">Acciones rápidas</h3>
+        <button type="button" id="dash-export-excel-2" class="dash-btn-accion-rapida dash-btn-accion-rapida--secundario" onclick="if(typeof exportarExcel==='function') exportarExcel();">Exportar Excel</button>
         <button type="button" id="dash-export-word-2" class="dash-btn-accion-rapida dash-btn-accion-rapida--secundario">Exportar Word</button>
         <button type="button" id="dash-export-pdf-2" class="dash-btn-accion-rapida dash-btn-accion-rapida--secundario">Exportar PDF</button>
         <button type="button" id="dash-generar-informe" class="dash-btn-accion-rapida dash-btn-accion-rapida--primario">Generar informe</button>
